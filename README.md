@@ -61,7 +61,7 @@
 3. `sudo chown -R USERNAME:pi ~/ftp` to change ownership (not necessary maybe) and change USERNAME to yours
 4. `sudo nano /etc/vsftpd.conf` and put this content:
 
-   ```
+   ```shell
    listen=NO
    listen_ipv6=YES
    anonymous_enable=NO
@@ -88,7 +88,7 @@
 1. Hard drive must be FAT32 otherwise we need special thing for NTFS
 2. `sudo nano /etc/fstab` and add:
 
-   ```
+   ```shell
    /dev/sda1 ~/ftp/drive  vfat    user,umask=0000   0       0
    ```
 3. `sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000` to mount it now
@@ -101,7 +101,7 @@
 5. `rm resilio-sync_arm.tar.gz LICENSE.txt` to remove useless files
 6. `nano resilio.conf` and add the following (AND CHANGE THE PASSWORD):
 
-   ```
+   ```json
    {
        "device_name": "Raspberry Pi",
        "listening_port" : 18952, //0 - randomize port
@@ -133,7 +133,7 @@
    ```
 7. `sudo nano /etc/init.d/rslsync` and enter the following:
 
-   ```
+   ```shell
    #! /bin/sh
    # /etc/init.d/rslsync
    ### BEGIN INIT INFO
@@ -194,7 +194,7 @@
 7. `sudo rm *.ovpn` to remove all the other OpenVPN configurations
 8. `sudo nano update-resolv-conf` and enter the following:
 
-   ```
+   ```bash
    #!/bin/bash
    #
    # Parses DHCP options from openvpn to update resolv.conf
@@ -264,7 +264,7 @@
 2. `sudo nano web.conf` and append your username and password in the format `username:password:10`
 3. `sudo nano core.conf` and enter the following:
 
-   ```
+   ```json
    {
      "file": 1,
      "format": 1
@@ -371,7 +371,7 @@
 5. `pip install --upgrade google-api-python-client` may be necessary
 6. `sudo nano /etc/rc.local` and append the following code before `exit 0`:
 
-   ```
+   ```shell
    # torrent client start:
    sudo -u USERNAME /usr/bin/python /usr/bin/deluged
    ```
@@ -384,7 +384,7 @@
 1. `mkdir ~/.duckdns && cd ~/.duckdns`
 2. `nano duck.sh` and enter the line provided by [www.duckdns.org](https://www.duckdns.org/install.jsp), similar to:
 
-   ```
+   ```shell
    echo url="https://www.duckdns.org/update?domains=user&token=xxxxxxxxxxxxxxxxxxx&ip=" | curl -k -o ~/duckdns/duck.log -K -
    ```
 3. `sudo chmod 700 duck.sh` to change permissions
@@ -402,7 +402,7 @@
 6. `sudo python main.py` to test the program in the command line
 7. `sudo nano /lib/systemd/system/portfolio.service` and enter the following:
 
-   ```
+   ```ini
    [Unit]
    Description=Portfolio Python program
    After=multi-user.target
@@ -427,7 +427,7 @@
 3. `sudo pip install -r requirements.txt`
 4. `sudo nano /lib/systemd/system/bellybutton.service` and enter the following:
 
-   ```
+   ```ini
    [Unit]
    Description=Belly Button Python program
    After=multi-user.target
@@ -464,7 +464,7 @@
    ```
 4. `sudo nano /lib/systemd/system/http.service` and enter the following:
 
-   ```
+   ```ini
    [Unit]
    Description=HTTP Python program
    After=multi-user.target
