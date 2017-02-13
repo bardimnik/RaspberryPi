@@ -134,12 +134,18 @@
 7. `sudo nano /etc/init.d/rslsync` and enter the following:
 
    ```shell
-   #! /bin/sh
-   # /etc/init.d/rslsync
+   #!/bin/sh
+   
    ### BEGIN INIT INFO
-   # Provides:             Resilio
-   # Short-Description:    Starts/Stops/Help for Resilio
-   # Description:          Starts/Stops/Help for Resilio
+   # Provides:          rslsync
+   # Required-Start:
+   # Required-Stop:
+   # Should-Start:
+   # Should-Stop:
+   # Default-Start:     2 3 4 5
+   # Default-Stop:      0 1 6
+   # Short-Description: Resilio service, for boot
+   # Description: This script will start Resilio (rslsync) at boot
    ### END INIT INFO
    
    # Carry out specific functions when asked to by the system
@@ -255,8 +261,8 @@
    ```
 9. `sudo nano /etc/default/openvpn` and append `AUTOSTART="Romania"`
 10. `curl ipinfo.io/$(wget -q -O - ipecho.net/plain)` to check your normal public IP
-11. `sudo systemctl start openvpn@Romania.service` to start the openvpn service now
-12. `systemctl status openvpn@Romania.service` to check the service works
+11. `sudo service openvpn start` to start the openvpn service now (or use `sudo systemctl start openvpn@Romania.service`)
+12. `sudo service openvpn status` to check the service works
 13. `curl ipinfo.io/$(wget -q -O - ipecho.net/plain)` to check the VPN public IP
 
 ## Deluge
@@ -376,9 +382,55 @@
    sudo -u USERNAME /usr/bin/python /usr/bin/deluged
    ```
 7. `deluged` to launch the daemon now. You can access it at user@192.168.1.x:58846
+8. Modify IP Tables so that deluge can only work through the openvpn tunnel
+    1. `sudo nano /etc/init.d/iptables` and enter the following:
 
-## IP tables
+      ```shell
+      #! /bin/sh
+      # /etc/init.d/iptables 
+      
+      ### BEGIN INIT INFO
+      # Provides:          iptables
+      # Required-Start:    $remote_fs $syslog
+      # Required-Stop:     $remote_fs $syslog
+      # Default-Start:     2 3 4 5
+      # Default-Stop:      0 1 6
+      # Short-Description: Script to set up iptables for Deluge and VPN
+      # Description:       TBA
+      ### END INIT INFO
+      
+      case "$1" in
+        start)
+          echo "Starting iptables"
+          iptables -A OUTPUT -m owner --gid-owner debian-deluged -o lo -j ACCEPT
+          iptables -A OUTPUT -m owner --gid-owner debian-deluged -d 192.168.1.1 -j REJECT
+          iptables -A OUTPUT -m owner --gid-owner debian-deluged -o eth0 -d 192.168.1.0/24 -j ACCEPT
+          iptables -A OUTPUT -m owner --gid-owner debian-deluged \! -o tun0 -j REJECT
+          ;;
+        stop)
+          echo "Stopping iptables (not implemented yet)"
+          ;;
+        *)
+          echo "Usage: /etc/init.d/iptables {start|stop}"
+          exit 1
+          ;;
+      esac
+      
+      exit 0
+      ```
+    2. `sudo chmod 755 /etc/init.d/iptables` to make it executable
+    3. `sudo /etc/init.d/iptables start` to test it works
+        - Test it works with the VPN on
+            1. `sudo service openvpn start` to start the VPN
+            2. `sudo -u debian-deluged ping -c 4 8.8.8.8` and it should transmit the packets
+        - Test it fails without the VPN
+            1. `sudo service openvpn stop` to stop the VPN
+            2. `sudo -u debian-deluged ping -c 4 8.8.8.8` and it should transmit no packet
+        - In case of problem, you can use `sudo iptables -F INPUT` to flush the ip table.
+    4. `sudo update-rc.d iptables defaults` to make it run at boot once you've checked it works
 
+## VPN for Deluge only
+- Nearly impossible to do without a VM
 
 ## Duckdns
 1. `mkdir ~/.duckdns && cd ~/.duckdns`
@@ -483,6 +535,12 @@
 9. `sudo systemctl start http.service`
 10. `sudo systemctl status http.service` to check it works
 
+## Bitcoin full node
+- Working on it
+
 ## Useful commands
-- `wget -q -O - ipecho.net/plain`
-- `curl ipinfo.io/$(wget -q -O - ipecho.net/plain)`
+1. `sudo nano ~/.bashrc` and append the following:
+   ```bash
+   alias myip='wget -q -O - ipecho.net/plain'
+   alias myipmore='curl ipinfo.io/$(wget -q -O - ipecho.net/plain)'
+   ```
