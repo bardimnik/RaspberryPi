@@ -504,17 +504,23 @@
 3. `sudo nano http.py` and paste this content
 
    ```python
-   from SimpleHTTPServer import SimpleHTTPRequestHandler
-   from SocketServer import TCPServer
+   from bottle import get, static_file, run
    from os import chdir, path
-   
+
+   @get('/Mods/<path:path>')
+   def get_Mods(path):
+       return static_file(path, root='Mods')
+
+   @get('/usermaps/<path:path>')
+   def get_usermaps(path):
+       return static_file(path, root='usermaps')
+
    if __name__ == '__main__':
        chdir(path.dirname(path.realpath(__file__)))
-       Handler = SimpleHTTPRequestHandler
-       httpd = TCPServer(("", 16257), Handler)
-       httpd.serve_forever()
+       run(server='paste', host='0.0.0.0', port=16257)
    ```
-4. `sudo nano /lib/systemd/system/http.service` and enter the following:
+4. Install some Python packages with `sudo pip install bottle paste`
+5. `sudo nano /lib/systemd/system/http.service` and enter the following:
 
    ```ini
    [Unit]
@@ -528,12 +534,12 @@
    [Install]
    WantedBy=multi-user.target
    ```
-5. `sudo chmod 644 /lib/systemd/system/http.service` to change permissions
-6. `sudo +x ~/ftp/drive/http/http.py` to make it executable
-7. `sudo systemctl daemon-reload`
-8. `sudo systemctl enable http.service`
-9. `sudo systemctl start http.service`
-10. `sudo systemctl status http.service` to check it works
+6. `sudo chmod 644 /lib/systemd/system/http.service` to change permissions
+7. `sudo +x ~/ftp/drive/http/http_cod4.py` to make it executable
+8. `sudo systemctl daemon-reload`
+9. `sudo systemctl enable http.service`
+10. `sudo systemctl start http.service`
+11. `sudo systemctl status http.service` to check it works
 
 ## Bitcoin full node
 - Working on it
