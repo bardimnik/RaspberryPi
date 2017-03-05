@@ -1,24 +1,55 @@
 # Raspberry Pi
 
 ## 1. First run: *Time*, *passwords* and *simple SSH remote access*
-0. Username and password are `pi` and `raspberry` by default
-1. `sudo raspi-config` to change the date and password for user *pi*
-    1. *Change User Password* and enter your new password twice
-    2. *Localisation Options*, *Change timezone*, then choose your timezone 
-2. `sudo passwd root` to set up the password for root
-3. `sudo service ssh start` to launch ssh for remote access
-4. `ifconfig` and note your LAN IP address (usually 192.168.1.XXX)
-5. On your computer, generate a RSA key pair if you did not already.
-6. On your computer, enter the following and replace the XXX with your 
+1. Username and password are **pi** and **raspberry** by default
+2. Change the date and password for user *pi* with:
+
+   ```bash
+   sudo raspi-config
+   ```
+   
+    - *Change User Password* and enter your new password twice
+    - *Localisation Options*, *Change timezone*, then choose your timezone 
+3. Set up the password for root with:
+
+   ```bash
+   sudo passwd root
+   ```
+   
+4. Launch ssh for remote access with
+
+   ```bash
+   sudo service ssh start
+   ```
+   
+5. Enter and note your LAN IP address (usually 192.168.1.XXX):
+
+   ```bash
+   ifconfig
+   ```
+   
+6. On your computer, generate a RSA key pair if you did not already.
+    - You need **ssh-keygen**.
+    - On Windows only:
+        - Simply download and install [**Git**](https://www.git-scm.com/downloads) 
+        - Add *C:\Program Files\Git\usr\bin* to your path or `C: && cd C:\Program Files\Git\usr\bin`
+    - Generate the RSA key pair and enter a password to protect it
+    
+      ```bash
+      ssh-keygen
+      ```
+      
+7. On your computer, enter the following and replace the XXX with your 
    Raspberry Pi's LAN IP address:
    
     ```bash
     cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.XXX "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
     ```
+    
     - Answer **yes** for the host's authenticity establishment
     - Input the username pi's password you have setup previously.
     - Your SSH public key is now registered in your Raspberry Pi.
-7. Remotely log in to your Raspberry Pi with
+8. Remotely log in to your Raspberry Pi with
 
    ```bash
    ssh pi@192.168.1.XXX
@@ -27,9 +58,19 @@
    And enter your SSH key's password when prompted.
 
 ## 2. Advanced *SSH* and *SFTP*
-0. `sudo touch /boot/ssh` to make ssh start at boot.
-1. For more devices to access your PI via SSH:
-    - `sudo nano ~/.ssh/authorized_keys
+1. Make ssh start at boot automatically with:
+
+   ```bash
+   sudo touch /boot/ssh
+   ```
+   
+2. For more devices to access your Pi via SSH
+    - Enter:
+    
+    ```bash
+    sudo nano ~/.ssh/authorized_keys
+    ```
+    
     - Save the public keys similarly to this:
     
       ```
@@ -37,10 +78,27 @@
       ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAA.... Otherapplication
       ...
       ```
-2. `sudo chmod 700 ~/.ssh/` to change permissions for security purposes
-3. `sudo chmod 600 ~/.ssh/authorized_keys` to change permissions for security purposes
-4. `sudo nano /etc/ssh/sshd_config` to change the SSH configuration with this content:
+      
+2. Change permissions for security purposes:
 
+   ```bash
+   sudo chmod 700 ~/.ssh/
+   ```
+   
+3. Change permissions for security purposes:
+
+   ```bash
+   sudo chmod 600 ~/.ssh/authorized_keys
+   ```
+   
+4. Change the SSH configuration with:
+
+   ```bash
+   sudo nano /etc/ssh/sshd_config
+   ```
+   
+   and replace everything with:
+   
    ```
    Port 37032
    # Use these options to restrict which interfaces/protocols sshd will bind to
@@ -69,25 +127,67 @@
    ChallengeResponseAuthentication no
    PasswordAuthentication no
    ```
-5. `sudo service ssh restart` to load the new configuration
-6. You will then be able to access your Raspberry Pi with
+5. Load the new configuration and restart the service ssh
+
+   ```bash
+   sudo service ssh restart   
+   ```
+   
+6. You will then be able to access your Raspberry Pi with:
+
    ```bash
    ssh pi@192.168.1.XXX -p 37032
    ```
-   and only with the SSH key pairs registered.
    
+   and only with the SSH key pairs registered.
+
 ## *Install* and *update* some packages
-1. `sudo apt-get update` to update your list of programs etc.
-2. `sudo apt-get upgrade` to upgrade your system
-3. `sudo apt-get -y install htop git vsftpd zip openvpn python-pip deluged deluge-console python-mako deluge-web`
-4. `sudo apt-get -y autoremove` to do some cleanup
+1. Update your list of programs etc with:
+
+   ```bash
+   sudo apt-get update
+   ```
+
+2. Upgrade your system with:
+
+   ```bash
+   sudo apt-get upgrade
+   ```
+
+3. Install some packages
+
+    ```bash
+    sudo apt-get -y install htop git vsftpd zip openvpn python-pip deluged deluge-console python-mako deluge-web
+    ```
+
 
 ## FTP for LAN
-1. `mkdir ~/ftp` to create an ftp directory
-2. `sudo chmod 700 ~/ftp` to change permissions
-3. `sudo chown -R USERNAME:pi ~/ftp` to change ownership (not necessary maybe) and change USERNAME to yours (or **pi**)
-4. `sudo nano /etc/vsftpd.conf` and put this content:
+1. Create an ftp directory with:
+   
+   ```bash
+   mkdir ~/ftp
+   ```
+   
+2. Change permissions with:
 
+   ```bash
+   sudo chmod 700 ~/ftp
+   ```
+   
+3. Enter this to change ownership (not necessary maybe) and change USERNAME to yours (or **pi**):
+
+   ```bash
+   sudo chown -R USERNAME:pi ~/ftp
+   ```
+   
+4. Edit the FTP configuration file with:
+
+   ```shell
+   sudo nano /etc/vsftpd.conf
+   ```
+   
+   and replace everything with:
+   
    ```shell
    listen=NO
    listen_ipv6=YES
@@ -109,28 +209,78 @@
    user_sub_token=$USER
    local_root=/home/$USER/ftp
    ```
-5. `sudo service vsftpd restart` to restart the FTP server
+   
+5. Restart the FTP server with the new configuration with:
+
+   ```shell
+   sudo service vsftpd restart
+   ```
+
 6. You can now connect to it at [ftp://192.168.1.181/](ftp://192.168.1.181/), 
    with your username and password. This is accessible at the standard FTP port 21.
    **DO NOT USE THIS OUT OF YOUR LAN NETWORK IT IS UNSECURED**.
 
 ## Hard drive mounting
 1. Hard drive must be FAT32 otherwise we need special thing for NTFS
-2. `sudo nano /etc/fstab` and add:
+2. Edit the file system table with:
+
+   ```shell
+   sudo nano /etc/fstab
+   ```
+   
+   and add:
+
    ```shell
    /dev/sda1 ~/ftp/drive  vfat    user,umask=0000   0       0
    ```
-3. `sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000` to mount it now
+
+3. Mount it now with:
+
+   ```shell
+   sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000
+   ```
+
 4. After that your Pi won't boot up correctly if the hard drive is not connected...
-   You would have to change *fstab* back so it boots fine.
+   You would have to change *fstab* back so that it boots fine.
 
 ## Resilio
-1. `mkdir ~/ftp/drive/resilio` to create a shared resilio directory
-2. `mkdir ~/.resilio && cd ~/.resilio` to create a hidden resilio configuration directory
-3. `wget https://download-cdn.resilio.com/stable/linux-arm/resilio-sync_arm.tar.gz` to download it
-4. `tar -xf resilio-sync_arm.tar.gz rslsync` to extract it
-5. `rm resilio-sync_arm.tar.gz` to remove the archive.
-6. `nano resilio.conf` and add the following (AND CHANGE THE PASSWORD):
+1. Create a shared resilio directory with:
+
+   ```shell
+   mkdir ~/ftp/drive/resilio
+   ```
+
+2. Create a hidden resilio configuration directory with:
+
+   ```shell
+   mkdir ~/.resilio && cd ~/.resilio
+   ```
+
+3. Download Resilio for ARM with:
+
+   ```shell
+   wget https://download-cdn.resilio.com/stable/linux-arm/resilio-sync_arm.tar.gz
+   ```
+
+4. Extract it with:
+
+   ```shell
+   tar -xf resilio-sync_arm.tar.gz rslsync
+   ```
+
+5. Remove the archive with:
+
+   ```shell
+   rm resilio-sync_arm.tar.gz
+   ```
+
+6. Create the configuration file with:
+   
+   ```shell
+   nano resilio.conf
+   ```
+   
+   and enter the following (AND CHANGE THE PASSWORD)
 
    ```json
    {
@@ -162,7 +312,15 @@
        //see more at "http://help.getsync.com/customer/portal/articles/1902048-sync-advanced-preferences--more-options"
    }
    ```
-7. `sudo nano /etc/init.d/rslsync` and enter the following:
+
+7. Create the boot script with:
+
+   ```shell
+   sudo nano /etc/init.d/rslsync
+   ```
+   
+   and enter the following:
+   
    ```shell
    #!/bin/sh
    
@@ -194,10 +352,31 @@
    
    exit 0
    ```
-8. `sudo chmod +x /etc/init.d/rslsync` to make that script executable
-9. `sudo update-rc.d rslsync defaults`
-10. `sudo ./rslsync --config resilio.conf` to launch it now
-11. `sudo killall rslsync` to terminate
+   
+8. Make that script executable with:
+
+   ```shell
+   sudo chmod +x /etc/init.d/rslsync
+   ```
+
+9. Add it to the boot process with:
+
+   ```shell
+   sudo update-rc.d rslsync defaults
+   ```
+
+10. Launch it now with:
+
+    ```shell
+    sudo ./rslsync --config resilio.conf
+    ```
+    
+11. Terminate Resilio with:
+
+    ```shell
+    sudo killall rslsync
+    ```
+    
 
 ## VPN in Romania
 1. `cd /etc/openvpn`
