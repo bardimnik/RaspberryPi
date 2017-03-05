@@ -9,10 +9,9 @@
 3. `sudo service ssh start` to launch ssh for remote access
 4. `ifconfig` and note your LAN IP address (usually 192.168.1.XXX)
 5. On your computer, generate a RSA key pair if you did not already.
-    -
-    -
-5. On your computer, enter the following and replace the XXX with your 
+6. On your computer, enter the following and replace the XXX with your 
    Raspberry Pi's LAN IP address:
+   
     ```bash
     cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.XXX "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
     ```
@@ -20,9 +19,11 @@
     - Input the username pi's password you have setup previously.
     - Your SSH public key is now registered in your Raspberry Pi.
 7. Remotely log in to your Raspberry Pi with
+
    ```bash
    ssh pi@192.168.1.XXX
    ```
+   
    And enter your SSH key's password when prompted.
 
 ## 2. Advanced *SSH* and *SFTP*
@@ -30,6 +31,7 @@
 1. For more devices to access your PI via SSH:
     - `sudo nano ~/.ssh/authorized_keys
     - Save the public keys similarly to this:
+    
       ```
       ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAA.... quentin.mcgaw@gmail.com
       ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAA.... Otherapplication
@@ -38,6 +40,7 @@
 2. `sudo chmod 700 ~/.ssh/` to change permissions for security purposes
 3. `sudo chmod 600 ~/.ssh/authorized_keys` to change permissions for security purposes
 4. `sudo nano /etc/ssh/sshd_config` to change the SSH configuration with this content:
+
    ```
    Port 37032
    # Use these options to restrict which interfaces/protocols sshd will bind to
@@ -84,6 +87,7 @@
 2. `sudo chmod 700 ~/ftp` to change permissions
 3. `sudo chown -R USERNAME:pi ~/ftp` to change ownership (not necessary maybe) and change USERNAME to yours (or **pi**)
 4. `sudo nano /etc/vsftpd.conf` and put this content:
+
    ```shell
    listen=NO
    listen_ipv6=YES
@@ -127,6 +131,7 @@
 4. `tar -xf resilio-sync_arm.tar.gz rslsync` to extract it
 5. `rm resilio-sync_arm.tar.gz` to remove the archive.
 6. `nano resilio.conf` and add the following (AND CHANGE THE PASSWORD):
+
    ```json
    {
        "device_name": "Raspberry Pi",
@@ -220,6 +225,7 @@
 1. `cp ~/.config/deluge/auth ~/.config/deluge/auth.old` just in case
 2. `sudo nano web.conf` and append your username and password in the format `username:password:10`
 3. `sudo nano core.conf` and enter the following:
+
    ```json
    {
      "file": 1,
