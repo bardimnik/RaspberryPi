@@ -171,7 +171,7 @@
 2. Change permissions with:
 
    ```bash
-   sudo chmod 700 ~/ftp
+   sudo chmod -R 700 ~/ftp
    ```
    
 3. Enter this to change ownership (not necessary maybe) and change USERNAME to yours (or **pi**):
@@ -208,6 +208,7 @@
    ssl_enable=NO
    user_sub_token=$USER
    local_root=/home/$USER/ftp
+   allow_writeable_chroot=YES
    ```
    
 5. Restart the FTP server with the new configuration with:
@@ -379,31 +380,107 @@
     
 
 ## VPN in Romania
-1. `cd /etc/openvpn`
-2. `sudo wget https://www.privateinternetaccess.com/openvpn/openvpn.zip` to download files
-3. `sudo unzip openvpn.zip && sudo rm openvpn.zip` to extract
-4. `sudo nano file.txt` and enter your username and password on the first and second line respectively
-5. `sudo nano Romania.ovpn` and replace the line:
+1. Go to the OpenVpn directory with:
+   
+   ```shell
+   cd /etc/openvpn
+
    ```
-   auth-user-pass
+2. Download PIA openvpn configuration files with:
+
+   ```shell
+   sudo wget https://www.privateinternetaccess.com/openvpn/openvpn.zip
    ```
-   by:
+
+3. Unzip it
+
+   ```shell
+   sudo unzip openvpn.zip && sudo rm openvpn.zip` to extract
    ```
-   auth-user-pass file.txt
+
+4. Create your credentials file with:
+
+   ```shell
+sudo nano file.txt
    ```
-6. `sudo mv Romania.ovpn Romania.conf` for boot up purposes
-7. `sudo rm *.ovpn` to remove all the other OpenVPN configurations
-8. `sudo nano /etc/default/openvpn` and append `AUTOSTART="Romania"`
-9. `sudo reboot` to reboot the Pi and reconnect to it afterwards.
-10. `curl ipinfo.io/$(wget -q -O - ipecho.net/plain)` to check your normal public IP
-11. `sudo service openvpn@Romania start` to start the openvpn service now (or use `sudo systemctl start openvpn@Romania.service`)
-12. `sudo service openvpn@Romania status` to check the service works
-13. `curl ipinfo.io/$(wget -q -O - ipecho.net/plain)` to check the VPN public IP
+
+And enter your username and password on the first and second line respectively
+
+5. Edit the Romania VPN configuration with:
+
+   ```shell
+   sudo nano Romania.ovpn
+   ```
+   
+   Replace the line `auth-user-pass` by `auth-user-pass file.txt`
+6. For boot purposes, rename the configuration file with:
+   
+   ```shell
+   sudo mv Romania.ovpn Romania.conf
+   ```
+   
+7. Remove the other VPN configuration files with:
+
+   ```shell
+   sudo rm *.ovpn
+   ```
+
+8. Edit the boot VPN service with:
+   
+   ```shell
+   sudo nano /etc/default/openvpn
+   ```
+   
+   and append `AUTOSTART="Romania"`
+
+9. You may have to reboot your Raspberry Pi now with
+
+   ```shell
+   sudo reboot
+   ```
+   
+   and then reconnect to it with *ssh*.
+
+10. Check your normal public IP with:
+
+    ```shell
+    curl ipinfo.io/$(wget -q -O - ipecho.net/plain)
+    ```
+
+11. Launch the openvpn service and check it works fine with:
+
+    ```shell
+    sudo service openvpn@Romania start
+    sudo service openvpn@Romania status    
+    ```
+    
+12. Now recheck your public IP and it should match the VPN's IP:
+
+    ```shell
+    curl ipinfo.io/$(wget -q -O - ipecho.net/plain)
+    ```
 
 ## Deluge
-1. `cp ~/.config/deluge/auth ~/.config/deluge/auth.old` just in case
-2. `sudo nano web.conf` and append your username and password in the format `username:password:10`
-3. `sudo nano core.conf` and enter the following:
+1. Make a backup just in case:
+
+   ```shell
+   cp ~/.config/deluge/auth ~/.config/deluge/auth.old
+   ```
+
+2. Edit the web configuration with:
+
+   ```shell
+   sudo nano web.conf
+   ```
+
+   and append your username and password in the format `username:password:10`
+3. Edit the core configuration with:
+   
+   ```shell
+   sudo nano core.conf
+   ```
+   
+   and replace everything with:   
 
    ```json
    {
@@ -508,78 +585,193 @@
      "plugins_location": "~/.config/deluge/plugins"
    }
    ```
-4. `killall deluged` just to be sure it is not running
-5. `pip install --upgrade google-api-python-client` may be necessary
-6. `sudo nano /etc/rc.local` and append the following code before `exit 0`:
+
+4. Kill all deluged processes with:
+   
+   ```shell
+   killall deluged
+   ```
+   
+5. You may have to  install some Python packages with:
+   
+   ```shell
+   pip install --upgrade google-api-python-client
+   ```
+   
+6. To make Deluged start at boot, edit with:
+   
+   ```shell
+   sudo nano /etc/rc.local
+   ```
+   
+   and append the following code before `exit 0`: (replace **USERNAME** with yours)
 
    ```shell
    # torrent client start:
    sudo -u USERNAME /usr/bin/python /usr/bin/deluged
    ```
-7. `deluged` to launch the daemon now. You can access it at user@192.168.1.x:58846
-8. Modify IP Tables so that deluge can only work through the openvpn tunnel
-    1. `sudo nano /etc/init.d/iptables` and enter the following:
+   
+7. Launch the daemon with:
 
-      ```shell
-      #! /bin/sh
-      # /etc/init.d/iptables 
-      
-      ### BEGIN INIT INFO
-      # Provides:          iptables
-      # Required-Start:    $remote_fs $syslog
-      # Required-Stop:     $remote_fs $syslog
-      # Default-Start:     2 3 4 5
-      # Default-Stop:      0 1 6
-      # Short-Description: Script to set up iptables for Deluge and VPN
-      # Description:       TBA
-      ### END INIT INFO
-      
-      case "$1" in
-        start)
-          echo "Starting iptables"
-          iptables -A OUTPUT -m owner --gid-owner debian-deluged -o lo -j ACCEPT
-          iptables -A OUTPUT -m owner --gid-owner debian-deluged -d 192.168.1.1 -j REJECT
-          iptables -A OUTPUT -m owner --gid-owner debian-deluged -o eth0 -d 192.168.1.0/24 -j ACCEPT
-          iptables -A OUTPUT -m owner --gid-owner debian-deluged \! -o tun0 -j REJECT
-          ;;
-        stop)
-          echo "Stopping iptables (not implemented yet)"
-          ;;
-        *)
-          echo "Usage: /etc/init.d/iptables {start|stop}"
-          exit 1
-          ;;
-      esac
-      
-      exit 0
-      ```
-    2. `sudo chmod 755 /etc/init.d/iptables` to make it executable
-    3. `sudo /etc/init.d/iptables start` to test it works
+   ```shell
+   deluged
+   ```
+
+   You can access it at user@192.168.1.x:58846
+
+8. Modify IP Tables so that deluge can only work through the openvpn tunnel
+    1. Edit the IPtables with:
+    
+       ```shell
+       sudo nano /etc/init.d/iptables
+       ```
+       
+       and replace everything with the following:
+
+       ```shell
+       #! /bin/sh
+       # /etc/init.d/iptables 
+       
+       ### BEGIN INIT INFO
+       # Provides:          iptables
+       # Required-Start:    $remote_fs $syslog
+       # Required-Stop:     $remote_fs $syslog
+       # Default-Start:     2 3 4 5
+       # Default-Stop:      0 1 6
+       # Short-Description: Script to set up iptables for Deluge and VPN
+       # Description:       TBA
+       ### END INIT INFO
+       
+       case "$1" in
+         start)
+           echo "Starting iptables"
+           iptables -A OUTPUT -m owner --gid-owner debian-deluged -o lo -j ACCEPT
+           iptables -A OUTPUT -m owner --gid-owner debian-deluged -d 192.168.1.1 -j REJECT
+           iptables -A OUTPUT -m owner --gid-owner debian-deluged -o eth0 -d 192.168.1.0/24 -j ACCEPT
+           iptables -A OUTPUT -m owner --gid-owner debian-deluged \! -o tun0 -j REJECT
+           ;;
+         stop)
+           echo "Stopping iptables (not implemented yet)"
+           ;;
+         *)
+           echo "Usage: /etc/init.d/iptables {start|stop}"
+           exit 1
+           ;;
+       esac
+       
+       exit 0
+       ```
+       
+    2. Make that executable with:
+    
+       ```shell
+       sudo chmod 755 /etc/init.d/iptables
+       ```
+       
+    3. Test it works with:
+    
+       ```shell
+       sudo /etc/init.d/iptables start
+       ```
+       
         - Test it works with the VPN on
-            1. `sudo service openvpn start` to start the VPN
-            2. `sudo -u debian-deluged ping -c 4 8.8.8.8` and it should transmit the packets
+            1. Start the VPN
+               
+               ```shell
+               sudo service openvpn start
+               ```
+               
+            2. Ping it and it should transmit the packets:
+            
+               ```shell
+               sudo -u debian-deluged ping -c 4 8.8.8.8
+               ```
+               
         - Test it fails without the VPN
-            1. `sudo service openvpn stop` to stop the VPN
-            2. `sudo -u debian-deluged ping -c 4 8.8.8.8` and it should transmit no packet
-        - In case of problem, you can use `sudo iptables -F INPUT` to flush the ip table.
-    4. `sudo update-rc.d iptables defaults` to make it run at boot once you've checked it works
+            1. Stop the VPN
+            
+               ```shell
+               sudo service openvpn stop
+               ```
+               
+            2. Ping it and it should transmit no packet
+            
+               ```shell
+               sudo -u debian-deluged ping -c 4 8.8.8.8
+               ```
+               
+        - In case of problem, you can the following to flush the ip table:
+          
+          ```shell
+          sudo iptables -F INPUT
+          ```
+          
+    4. Make it run at boot once you've checked it works, with:
+    
+       ```shell
+       sudo update-rc.d iptables defaults
+       ```
+
 
 ## VPN for Deluge only
 - Nearly impossible to do without a VM
 - Another way is to use a router with OpenWRT (Working on that...)
 
 ## Duckdns
-1. `mkdir ~/.duckdns && cd ~/.duckdns`
-2. `nano duck.sh` and enter the line provided by [www.duckdns.org](https://www.duckdns.org/install.jsp), similar to:
+1. Create a hidden directory with
+
+   ```shell
+   mkdir ~/.duckdns
+   ```
+
+2. Create a shell script file with:
+
+   ```shell
+   nano ~/.duckdns/duck.sh
+   ```
+   
+   And enter the line provided by [www.duckdns.org](https://www.duckdns.org/install.jsp), similar to:
 
    ```shell
    echo url="https://www.duckdns.org/update?domains=user&token=xxxxxxxxxxxxxxxxxxx&ip=" | curl -k -o ~/duckdns/duck.log -K -
    ```
-3. `sudo chmod 700 duck.sh` to change permissions
-4. `crontab -e` and append `*/5 * * * * ~/.duckdns/duck.sh >/dev/null 2>&1`
-5. `./duck.sh ` to launch duckdns now
-6. `cat duck.log` to check it works
-7. `sudo service cron start` to make it check each 5 minutes
+   
+3. Change permissions with:
+
+   ```shell
+   sudo chmod 700 ~/.duckdns/duck.sh
+   ```
+   
+4. Edit the **crontab** with:
+
+   ```shell
+   crontab -e
+   ```
+   
+   and append:
+   
+   ```shell
+   */5 * * * * ~/.duckdns/duck.sh >/dev/null 2>&1
+   ```
+   
+5. Launch DuckDNS now with:
+
+   ```shell
+   ./duck.sh
+   ```
+   
+6. Check it works with
+
+   ```shell
+   cat duck.log
+   ```
+   
+7. Make DuckDNS check your IP each 5 minutes with:
+
+   ```shell
+   sudo service cron start
+   ```
+
 
 ## Portfolio
 1. `cd ~/ftp/drive`
@@ -655,6 +847,7 @@
        chdir(path.dirname(path.realpath(__file__)))
        run(server='paste', host='0.0.0.0', port=16257)
    ```
+
 4. Install some Python packages with `sudo pip install bottle paste`
 5. `sudo nano /lib/systemd/system/http.service` and enter the following:
 
