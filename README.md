@@ -251,13 +251,13 @@
    - For NTFS drives:
 
      ```shell
-     sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000
+     sudo mount /dev/sda1 ~/ftp/drive -o umask=0000
      ```
      
    - For FAT drives:
      
      ```shell
-     sudo mount /dev/sda1 ~/ftp/drive -o umask=0000
+     sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000
      ```
 
 5. After that your Pi won't boot up correctly if the hard drive is not connected...
@@ -480,6 +480,14 @@ And enter your username and password on the first and second line respectively
     ```
 
 ## Deluge
+1. Create a directory for Deluge, for torrents and files downloaded:
+
+   ```shell
+   mkdir ~/ftp/drive/deluge
+   mkdir ~/ftp/drive/deluge/downloads
+   mkdir ~/ftp/drive/deluge/torrents
+   ```
+   
 1. Make a backup just in case:
 
    ```shell
