@@ -126,6 +126,7 @@
    PermitEmptyPasswords no
    ChallengeResponseAuthentication no
    PasswordAuthentication no
+   Subsystem sftp internal-sftp
    ```
 5. Load the new configuration and restart the service ssh
 
