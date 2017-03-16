@@ -420,7 +420,7 @@
 4. Create your credentials file with:
 
    ```shell
-sudo nano file.txt
+   sudo nano file.txt
    ```
 
 And enter your username and password on the first and second line respectively
@@ -538,7 +538,7 @@ And enter your username and password on the first and second line respectively
      "max_active_seeding": 100,
      "allow_remote": true,
      "max_half_open_connections": -1,
-     "download_location": "~/ftp/drive/downloads",
+     "download_location": "~/ftp/drive/deluge/downloads",
      "compact_allocation": false,
      "max_upload_speed": -1.0,
      "cache_expiry": 60,
@@ -616,24 +616,18 @@ And enter your username and password on the first and second line respectively
      "add_paused": true,
      "max_connections_per_torrent": -1,
      "remove_seed_at_ratio": false,
-     "autoadd_location": "~/ftp/drive/torrents",
+     "autoadd_location": "~/ftp/drive/deluge/torrents",
      "plugins_location": "~/.config/deluge/plugins"
    }
    ```
 
-4. Kill all deluged processes with:
-   
-   ```shell
-   killall deluged
-   ```
-   
-5. You may have to  install some Python packages with:
+6. You may have to  install some Python packages with:
    
    ```shell
    pip install --upgrade google-api-python-client
    ```
    
-6. To make Deluged start at boot, edit with:
+7. To make Deluged start at boot, edit with:
    
    ```shell
    sudo nano /etc/rc.local
@@ -646,7 +640,7 @@ And enter your username and password on the first and second line respectively
    sudo -u USERNAME /usr/bin/python /usr/bin/deluged
    ```
    
-7. Launch the daemon with:
+8. Launch the daemon with:
 
    ```shell
    deluged
@@ -654,7 +648,7 @@ And enter your username and password on the first and second line respectively
 
    You can access it at user@192.168.1.x:58846
 
-8. Modify IP Tables so that deluge can only work through the openvpn tunnel
+9. Modify IP Tables so that deluge can only work through the openvpn tunnel
     1. Edit the IPtables with:
     
        ```shell
