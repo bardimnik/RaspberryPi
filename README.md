@@ -488,20 +488,28 @@ And enter your username and password on the first and second line respectively
    mkdir ~/ftp/drive/deluge/torrents
    ```
    
-1. Make a backup just in case:
+2. Run Deluge and kill it to create some initial configuration files:
+
+   ```shell
+   deluged
+   sudo pkill deluged
+   ```
+
+
+3. Make a backup just in case:
 
    ```shell
    cp ~/.config/deluge/auth ~/.config/deluge/auth.old
    ```
 
-2. Edit the web configuration with:
+4. Edit the web configuration with:
 
    ```shell
-   sudo nano web.conf
+   sudo nano ~/.config/deluge/auth
    ```
 
    and append your username and password in the format `username:password:10`
-3. Edit the core configuration with:
+5. Edit the core configuration with:
    
    ```shell
    sudo nano core.conf
