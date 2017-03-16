@@ -157,7 +157,7 @@
 3. Install some packages
 
     ```bash
-    sudo apt-get -y install htop git vsftpd zip openvpn python-pip deluged deluge-console python-mako deluge-web
+    sudo apt-get -y install htop git vsftpd zip openvpn python-pip deluged deluge-console python-mako deluge-web ntfs-3g
     ```
 
 
@@ -222,26 +222,45 @@
    **DO NOT USE THIS OUT OF YOUR LAN NETWORK IT IS UNSECURED**.
 
 ## Hard drive mounting
-1. Hard drive must be FAT32 otherwise we need special thing for NTFS
+1. Create a directory to mount the hard drive with:
+
+   ```shell
+   mkdir ~/ftp/drive
+   ```
+   
 2. Edit the file system table with:
 
    ```shell
    sudo nano /etc/fstab
    ```
-   
-   and add:
 
-   ```shell
-   /dev/sda1 ~/ftp/drive  vfat    user,umask=0000   0       0
-   ```
+3. And add the following:
+    - For NTFS drives:
+    
+      ```shell
+      /dev/sda1 ~/ftp/drive  ntfs-3g    user,umask=0000   0       0
+      ```
+      
+    - For FAT drives:
+      
+      ```shell
+      /dev/sda1 ~/ftp/drive  vfat    user,umask=0000   0       0
+      ```
+      
+4. Mount it now with:
+   - For NTFS drives:
 
-3. Mount it now with:
+     ```shell
+     sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000
+     ```
+     
+   - For FAT drives:
+     
+     ```shell
+     sudo mount /dev/sda1 ~/ftp/drive -o umask=0000
+     ```
 
-   ```shell
-   sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000
-   ```
-
-4. After that your Pi won't boot up correctly if the hard drive is not connected...
+5. After that your Pi won't boot up correctly if the hard drive is not connected...
    You would have to change *fstab* back so that it boots fine.
 
 ## Resilio
