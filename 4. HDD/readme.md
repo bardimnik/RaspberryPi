@@ -4,7 +4,7 @@
 
 ### What is it about
 - Mount a hard drive at boot
-- 
+- Mount a FAT/NTFS hard drive now
 
 ### Instructions
 1. Create a directory to mount the hard drive with:
