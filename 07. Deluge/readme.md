@@ -65,7 +65,7 @@
      "max_active_seeding": 100,
      "allow_remote": true,
      "max_half_open_connections": -1,
-     "download_location": "~/ftp/drive/deluge/downloads",
+     "download_location": "/home/pi/ftp/drive/deluge/downloads",
      "compact_allocation": false,
      "max_upload_speed": -1.0,
      "cache_expiry": 60,
@@ -143,8 +143,8 @@
      "add_paused": false,
      "max_connections_per_torrent": -1,
      "remove_seed_at_ratio": false,
-     "autoadd_location": "~/ftp/drive/deluge/torrents",
-     "plugins_location": "~/.config/deluge/plugins"
+     "autoadd_location": "/home/pi/ftp/drive/deluge/torrents",
+     "plugins_location": "/home/pi/.config/deluge/plugins"
    }
    ```
 
