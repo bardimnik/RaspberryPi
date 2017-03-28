@@ -13,34 +13,28 @@
    sudo touch /boot/ssh
    ```
    
-2. For more devices to access your Pi via SSH
-    - Enter:
-    
+2. For more devices to access your Pi via SSH, enter, as before:
     ```bash
-    sudo nano ~/.ssh/authorized_keys
+    cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.XXX "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
     ```
     
-    - Save the public keys similarly to this:
-    
-      ```
-      ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAA.... quentin.mcgaw@gmail.com
-      ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAA.... Otherapplication
-      ...
-      ```
+    - Answer **yes** for the host's authenticity establishment
+    - Input the username pi's password you have setup previously.
+    - Your SSH public key is now registered in your Raspberry Pi.
       
-2. Change permissions for security purposes:
+3. Change permissions for security purposes:
 
    ```bash
    sudo chmod 700 ~/.ssh/
    ```
    
-3. Change permissions for security purposes:
+4. Change permissions for security purposes:
 
    ```bash
    sudo chmod 600 ~/.ssh/authorized_keys
    ```
    
-4. Change the SSH configuration with:
+5. Change the SSH configuration with:
 
    ```bash
    sudo nano /etc/ssh/sshd_config
@@ -76,19 +70,18 @@
    ChallengeResponseAuthentication no
    PasswordAuthentication no
    Subsystem sftp internal-sftp
-   Subsystem sftp internal-sftp
        Match group sftpusers
        ChrootDirectory %h
        ForceCommand internal-sftp
    ```
 
-5. Load the new configuration and restart the service ssh
+6. Load the new configuration and restart the service ssh
 
    ```bash
    sudo service ssh restart   
    ```
    
-6. You will then be able to access your Raspberry Pi with:
+7. You will then be able to access your Raspberry Pi with:
 
    ```bash
    ssh pi@192.168.1.XXX -p 37032
