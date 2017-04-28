@@ -133,7 +133,7 @@
 10. Launch it now with:
 
     ```shell
-    sudo ./~/.resilio/rslsync --config ~/.resilio/resilio.conf
+    sudo ~/.resilio/rslsync --config ~/.resilio/resilio.conf
     ```
     
 11. Terminate Resilio with:

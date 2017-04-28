@@ -168,13 +168,22 @@
    ```
 
    You can access it at user@192.168.**XXX**.**XXX**:58846
+   
+8. Deluge Web UI
+    1. Launch it from the Raspberry Pi with:
+    
+       ```shell
+       deluge-web --fork
+       ```
+       
+     2. Access it with your browser at 192.168.**XXX**.**XXX**:8112
+     3. The default password is **deluge**
 
-8. Terminate Deluged with:
+9. Terminate Deluged with:
 
    ```shell
    sudo pkill deluged
    ```
    
-9. Make the VPN for Deluged only.. seems impossible? (in progress)
+10. Make the VPN for Deluged only.. seems impossible? (in progress)
 
-10. Deluge Web (in progress)
