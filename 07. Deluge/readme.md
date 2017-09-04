@@ -177,7 +177,7 @@
        ```
        
      2. Access it with your browser at 192.168.**XXX**.**XXX**:8112
-     3. The default password is **deluge**
+     3. The default password is **deluge**, which you should change through the Web UI on your browser.
 
 9. Terminate Deluged with:
 

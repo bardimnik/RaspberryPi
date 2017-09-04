@@ -3,7 +3,8 @@
 ## Plex
 
 ### What is it about
-- Item 1
+- Install Plex Media Server on Raspberry Pi with a hard drive
+- **WARNING**: The Raspberry Pi might be not powerful enough to run Plex smoothly, so you might want to skip this part.
 
 ### Instructions
 1. Install the HTTPS transport package with:
@@ -52,4 +53,4 @@
    
 8. Access the Plex media server at *192.168.XXX.XXX:32400/web/*
 
-9. Sign in/Sign up and then click on **Add library**
+9. Sign in/Sign up and then click on **Add library** and add your media content.
