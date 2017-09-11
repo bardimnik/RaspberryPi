@@ -6,20 +6,20 @@
 - Setup a lightweight Minecraft server for up to 4 people
 
 ### Instructions
-1. Install the following packages with:
+1. Install the **screen** packages with:
    
    ```shell
    sudo apt-get update
-   sudo apt-get install netatalk screen avahi-daemon
+   sudo apt-get install screen
    ```
    
-2. Download the latest version of Java JDK 8
-   - Download it from [oracle](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) with a browser
+2. Download the latest version of **Java 8**
+   - Download it from [**Oracle**](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) with a browser
    - Choose the ARM 32 bit Hard Float ABI architecture
-   - Rename the downloaded archive to jdk8.tar.gz and move it to ~/
+   - Rename the downloaded archive to *jdk8.tar.gz* and move it to `~/`
    
 3. Install Java 8:
-   - Move the archive to /usr/java and extract it with:
+   - Move *jdk8.tar.gz* and extract it with:
    
       ```shell
 	  sudo mkdir /usr/java
@@ -49,11 +49,47 @@
    cd ~/ftp/drive/minecraft
    ```
    
-5. Download **Spigotmc** from linuxnorth.org
+5. Build **Spigotmc**
+   - By building from source (safer):
+      1. Download from [spigotmc.org](https://hub.spigotmc.org) with:
+	     
+		 ```shell
+		 wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+		 ```
+		 
+      2. Set your git with: 
+	  
+	     ```shell
+		 git config --global --unset core.autocrlf
+		 ```
+		 
+      3. Build it with Java 8 (**takes about 1 hour**) in the background with:
+	  
+	     ```shell
+		 sudo screen -S mcbuilder -d -m java -jar BuildTools.jar --rev latest
+		 ```
+		 
+		 Check it with:
+		 
+		 ```shell
+		 screen -r mcbuilder
+		 ```
+		 
+		 Detach from it with **CTRL**+**A** - **D**
+		 
+      4. Once done, you can delete all the files except **spigot-1.12.1.jar** with:
+	   
+	     ```shell
+		 sudo mv spigot-1.12.1.jar ../spigot-1.12.1.jar
+		 sudo rm -fr *
+		 sudo mv ../spigot-1.12.1.jar ./spigot-1.12.1.jar
+		 ```
+		 
+   - Download it from [linuxnorth.org](https://www.linuxnorth.org/minecraft/download/) with:
    
-   ```shell
-   wget https://www.linuxnorth.org/minecraft/download/spigot-1.12.1.jar
-   ```
+      ```shell
+	  wget https://www.linuxnorth.org/minecraft/download/spigot-1.12.1.jar
+	  ```
    
 6. Start the server with:
 
@@ -70,12 +106,13 @@
 8. Enter the command below:
    
    ```shell
-   sudo rm server.properties && sudo nano server.properties
+   sudo rm server.properties
+   sudo nano server.properties
    ```
    
    and paste the following content in the editor:
    
-   ```ini
+   ```
 #Minecraft server properties
 #Mon Sep 11 00:39:19 EDT 2017
 generator-settings=
@@ -112,14 +149,22 @@ view-distance=5
 motd=Spigot Minecraft RPI
    ```
 
-9. Start the server again with:
+9. For better performance, install the **NoSpawnChunks** plugin
+   1. Download manually the **NoSpawnChunks** plugin from [https://dev.bukkit.org/projects/nospawnchunks/files](https://dev.bukkit.org/projects/nospawnchunks/files)
+   2. Move the **jar** file to *~/ftp/drive/minecraft/plugins/
+   
+10. Start the server again but in the background with:
 
    ```shell
-   java -jar -Xms384M -Xmx800M spigot-1.12.1.jar nogui
+   screen -S minecraft -d -m java -jar -Xms384M -Xmx800M spigot-1.12.1.jar nogui
    ```
    
-10. For better performance:
-   - Download the **NoSpawnChunks** plugin from [https://dev.bukkit.org/projects/nospawnchunks/files](https://dev.bukkit.org/projects/nospawnchunks/files)
-     and move the **jar** file to *~/ftp/drive/minecraft/plugins
+11. Stop the server with:
+
+   ```shell
+   screen -r minecraft
+   stop
+   ```
    
+   And kill the screen with **CTRL**+**A**+**K**
 
