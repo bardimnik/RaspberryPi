@@ -94,7 +94,7 @@
 6. Start the server with:
 
    ```shell
-   java -jar -Xms384M -Xmx800M spigot-1.12.1.jar nogui
+   java -jar -Xms256M -Xmx800M spigot-1.12.1.jar nogui
    ```
    
 7. Edit *eula.txt* by changing **eula=false** to **eula=true** with:
@@ -119,22 +119,24 @@
    generator-settings=
    op-permission-level=4
    allow-nether=true
-   level-name=world
+   level-name=world2017
+   enable-query=false
    allow-flight=false
    prevent-proxy-connections=false
    server-port=25565
    max-world-size=29999984
    level-type=DEFAULT
-   level-seed=
+   enable-rcon=false
+   level-seed=-086205852866623
    force-gamemode=true
    server-ip=
    network-compression-threshold=256
-   max-build-height=256
+   max-build-height=384
    spawn-npcs=true
-   white-list=false
+   white-list=true
    spawn-animals=true
    hardcore=false
-   snooper-enabled=true
+   snooper-enabled=false
    resource-pack-sha1=
    online-mode=true
    resource-pack=
@@ -144,9 +146,10 @@
    gamemode=0
    player-idle-timeout=0
    max-players=6
+   max-tick-time=60000
    spawn-monsters=true
-   generate-structures=true
    view-distance=5
+   generate-structures=true
    motd=Spigot Minecraft RPI
    ```
 
@@ -157,13 +160,30 @@
 10. Start the server again but in the background with:
 
    ```shell
-   screen -S minecraft -d -m java -jar -Xms384M -Xmx800M spigot-1.12.1.jar nogui
+   screen -S minecraft -d -m java -jar -Xms256M -Xmx800M spigot-1.12.1.jar nogui
    ```
    
-11. Stop the server with:
+11. Add users to the white list and Op yourself:
 
    ```shell
    screen -r minecraft
+   ```
+   
+   ```
+   whitelist add admin
+   whitelist add user1
+   whitelist add user2
+   op admin
+   gamemode 0 admin
+   ```
+   
+12. Stop the server with:
+
+   ```shell
+   screen -r minecraft
+   ```
+   
+   ```
    stop
    ```
    
