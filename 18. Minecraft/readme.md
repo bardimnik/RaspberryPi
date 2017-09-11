@@ -112,41 +112,42 @@
    
    and paste the following content in the editor:
    
+   
    ```
-#Minecraft server properties
-#Mon Sep 11 00:39:19 EDT 2017
-generator-settings=
-op-permission-level=4
-allow-nether=true
-level-name=world
-allow-flight=false
-prevent-proxy-connections=false
-server-port=25565
-max-world-size=29999984
-level-type=DEFAULT
-level-seed=
-force-gamemode=true
-server-ip=
-network-compression-threshold=256
-max-build-height=256
-spawn-npcs=true
-white-list=false
-spawn-animals=true
-hardcore=false
-snooper-enabled=true
-resource-pack-sha1=
-online-mode=true
-resource-pack=
-pvp=true
-difficulty=2
-enable-command-block=false
-gamemode=0
-player-idle-timeout=0
-max-players=6
-spawn-monsters=true
-generate-structures=true
-view-distance=5
-motd=Spigot Minecraft RPI
+   #Minecraft server properties
+   #Mon Sep 11 00:39:19 EDT 2017
+   generator-settings=
+   op-permission-level=4
+   allow-nether=true
+   level-name=world
+   allow-flight=false
+   prevent-proxy-connections=false
+   server-port=25565
+   max-world-size=29999984
+   level-type=DEFAULT
+   level-seed=
+   force-gamemode=true
+   server-ip=
+   network-compression-threshold=256
+   max-build-height=256
+   spawn-npcs=true
+   white-list=false
+   spawn-animals=true
+   hardcore=false
+   snooper-enabled=true
+   resource-pack-sha1=
+   online-mode=true
+   resource-pack=
+   pvp=true
+   difficulty=2
+   enable-command-block=false
+   gamemode=0
+   player-idle-timeout=0
+   max-players=6
+   spawn-monsters=true
+   generate-structures=true
+   view-distance=5
+   motd=Spigot Minecraft RPI
    ```
 
 9. For better performance, install the **NoSpawnChunks** plugin
@@ -167,4 +168,3 @@ motd=Spigot Minecraft RPI
    ```
    
    And kill the screen with **CTRL**+**A**+**K**
-
