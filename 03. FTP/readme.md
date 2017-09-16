@@ -34,7 +34,7 @@
 5. Edit the FTP configuration file with:
 
    ```shell
-   sudo rm /etc/vsftpd.conf && nano /etc/vsftpd.conf
+   sudo rm /etc/vsftpd.conf && sudo nano /etc/vsftpd.conf
    ```
    
    and enter the following:

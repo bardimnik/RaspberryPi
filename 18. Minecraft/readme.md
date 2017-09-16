@@ -24,6 +24,7 @@
       ```shell
 	  sudo mkdir /usr/java
 	  sudo mv ~/jdk8.tar.gz /usr/java/
+	  cd /usr/java
 	  sudo tar xf jdk8.tar.gz
 	  sudo rm jdk8.tar.gz
 	  ```
@@ -31,8 +32,8 @@
    - Create symbolic links for java with:
   
       ```shell
-      sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_111/bin/java 1000	  
-	  sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_111/bin/javac 1000
+      sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_144/bin/java 1000	  
+	  sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_144/bin/javac 1000
 	  ```
 	  
    - Verify the Java version is correct with:

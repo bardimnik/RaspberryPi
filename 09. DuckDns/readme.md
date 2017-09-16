@@ -21,7 +21,7 @@
    And enter the line provided by [www.duckdns.org](https://www.duckdns.org/install.jsp), similar to:
 
    ```shell
-   echo url="https://www.duckdns.org/update?domains=user&token=xxxxxxxxxxxxxxxxxxx&ip=" | curl -k -o ~/duckdns/duck.log -K -
+   echo url="https://www.duckdns.org/update?domains=yyyyyyyyyyyyyyyyyy&token=xxxxxxxxxxxxxxxxxxx&ip=" | curl -k -o ~/.duckdns/duck.log -K -
    ```
    
 3. Change permissions with:
@@ -45,17 +45,17 @@
 5. Launch DuckDNS now with:
 
    ```shell
-   ./duck.sh
+   ~/.duckdns/duck.sh
    ```
    
 6. Check it works with
 
    ```shell
-   cat duck.log
+   cat ~/.duckdns/duck.log
    ```
    
-7. Make DuckDNS check your IP each 5 minutes with:
+7. Make sure DuckDNS check your IP each 5 minutes with:
 
    ```shell
-   sudo service cron start
+   sudo service cron restart
    ```
