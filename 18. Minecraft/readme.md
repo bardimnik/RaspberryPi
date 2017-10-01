@@ -36,6 +36,12 @@
 	  sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_144/bin/javac 1000
 	  ```
 	  
+   - Make sure Java is executable with:
+      
+	  ```
+	  sudo chmod +x /usr/bin/java
+	  ```
+   
    - Verify the Java version is correct with:
    
       ```shell
