@@ -3,48 +3,49 @@
 ## Hard drive
 
 ### What is it about
-- Mount a hard drive at boot
-- Mount a FAT/NTFS hard drive now
+
+- Mount a FAT/NTFS hard drive
+- Unmount it
+- Make it spin down when unused
 
 ### Instructions
+
 1. Create a directory to mount the hard drive with:
-
-   ```shell
-   mkdir ~/ftp/drive
-   ```
-   
-2. Edit the file system table with:
-
-   ```shell
-   sudo nano /etc/fstab
-   ```
-
-3. And add the following:
-    - For NTFS drives:
-    
-      ```shell
-      /dev/sda1 ~/ftp/drive  ntfs-3g    user,umask=0000   0       0
-      ```
-      
-    - For FAT drives:
-      
-      ```shell
-      /dev/sda1 ~/ftp/drive  vfat    user,umask=0000   0       0
-      ```
-      
-4. Mount it now with:
+    ```shell
+    mkdir ~/ftp/drive
+    ```
+1. Find out the drive (i.e. sda1) you want to mount with:
+    ```shell
+    sudo blkid
+    ```
+1. Mount it with:
    - For NTFS drives:
-
      ```shell
-     sudo apt-get -y install ntfs-3g
+     sudo apt-get install ntfs-3g -y
      sudo mount /dev/sda1 ~/ftp/drive -o umask=0000
      ```
-     
    - For FAT drives:
-     
      ```shell
      sudo mount -t vfat /dev/sda1 ~/ftp/drive -o umask=0000
      ```
-
-5. After that your Pi won't boot up correctly if the hard drive is not connected...
-   You would have to change *fstab* back so that it boots fine.
+1. Unmount it if you want to with:
+    ```shell
+    sudo umount ~/ftp/drive/
+    ```
+1. Make the *sda1* drive i.e. spin down when unused with:
+    ```shell
+    sudo apt-get install hdparm -y
+    sudo nano /etc/hdparm.conf    
+    ```
+    Add the following in the file:
+    ```
+    /dev/sda1 {
+    write_cache = on
+    spindown_time = 120
+    }
+    ```
+    Then restart the service:
+    ```shell
+    sudo service hdparm restart
+    ```
+    More information at [htpcguides.com](https://www.htpcguides.com/spin-down-and-manage-hard-drive-power-on-raspberry-pi/)

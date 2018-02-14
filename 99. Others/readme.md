@@ -38,7 +38,9 @@
     3. Append the following:
    
       ```shell
+      cat ~/.bashrc_art
       alias myip='wget -q -O - ipecho.net/plain && echo'
       alias myipmore='curl ipinfo.io/$(wget -q -O - ipecho.net/plain) && echo'
-      cat ~/.bashrc_art
+      alias Umount='sudo umount ~/ftp/drive/'
+      function Mount() { sudo mount /dev/"$1" ~/ftp/drive/ -o umask=0000;}
       ```
